@@ -23,6 +23,10 @@ contract OurTokenTest is Test {
         ourToken.transfer(bob, STARTING_BALANCE);
     }
 
+    function testInitialSupply() public {
+        assertEq(ourToken.totalSupply(), deployer.INITIAL_SUPPLY());
+    }
+
     function testBobBalance() public {
         assertEq(STARTING_BALANCE, ourToken.balanceOf(bob));
     }
@@ -42,5 +46,14 @@ contract OurTokenTest is Test {
         assertEq(ourToken.balanceOf(alice), transferAmount);
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE - transferAmount);
         // transferFrom
+    }
+
+    function testBalanceAfterTransfer() public {
+        uint256 amount = 1000;
+        address reciever = address(0x1);
+        uint256 initialBalance = ourToken.balanceOf(msg.sender);
+        vm.prank(msg.sender);
+        ourToken.transfer(reciever, amount);
+        assertEq(ourToken.balanceOf(msg.sender), initialBalance - amount);
     }
 }
